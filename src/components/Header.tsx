@@ -8,8 +8,8 @@ const Header = () => {
       <div className="flex items-start justify-between">
         {/* Logo and branding */}
         <div className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-elegant">
-          <div className="text-center">
-            <div className="w-full mb-3 flex justify-center">
+          <div className="text-left">
+            <div className="w-full mb-3">
               <img src={mvaLogo} alt="Minerva Virtual Academy" className="h-12 object-contain" />
             </div>
             <div>
