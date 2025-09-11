@@ -3,7 +3,6 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MarkerPopup } from './MarkerPopup';
 import { useMapboxToken } from '../hooks/useMapboxToken';
-import TokenInput from './TokenInput';
 
 interface LocationData {
   id: string;
@@ -103,7 +102,7 @@ const Globe = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { token, isLoading: tokenLoading, needsToken, setMapboxToken } = useMapboxToken();
+  const { token, isLoading: tokenLoading } = useMapboxToken();
 
   useEffect(() => {
     if (!mapContainer.current || tokenLoading || !token) return;
@@ -113,11 +112,11 @@ const Globe = () => {
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: 'mapbox://styles/mapbox/satellite-v9',
       projection: 'globe',
       zoom: 1.8,
       center: [20, 20],
-      pitch: 0,
+      pitch: 15,
     });
 
     // Add navigation controls
@@ -131,23 +130,43 @@ const Globe = () => {
     // Disable scroll zoom initially for smoother experience
     map.current.scrollZoom.disable();
 
-    // Add atmosphere and fog effects
+    // Add atmosphere and fog effects for daytime
     map.current.on('style.load', () => {
       map.current?.setFog({
-        color: 'hsl(240, 15%, 8%)',
-        'high-color': 'hsl(210, 85%, 25%)',
-        'horizon-blend': 0.3,
-        'space-color': 'hsl(240, 15%, 5%)',
-        'star-intensity': 0.6
+        color: 'rgb(135, 206, 235)',
+        'high-color': 'rgb(220, 220, 255)',
+        'horizon-blend': 0.1,
+        'space-color': 'rgb(11, 11, 25)',
+        'star-intensity': 0.2
       });
 
-      // Add markers after style loads
-      LOCATIONS.forEach((location) => {
+      // Add enhanced markers after style loads
+      LOCATIONS.forEach((location, index) => {
         const markerElement = document.createElement('div');
         markerElement.className = 'globe-marker';
+        
+        const isTeacher = location.type === 'teacher';
+        const colors = [
+          { bg: 'from-pink-500 to-rose-500', glow: 'shadow-pink-500/50' },
+          { bg: 'from-blue-500 to-cyan-500', glow: 'shadow-blue-500/50' },
+          { bg: 'from-green-500 to-emerald-500', glow: 'shadow-green-500/50' },
+          { bg: 'from-purple-500 to-violet-500', glow: 'shadow-purple-500/50' },
+          { bg: 'from-orange-500 to-amber-500', glow: 'shadow-orange-500/50' },
+          { bg: 'from-teal-500 to-cyan-500', glow: 'shadow-teal-500/50' },
+          { bg: 'from-indigo-500 to-blue-500', glow: 'shadow-indigo-500/50' },
+        ];
+        
+        const color = colors[index % colors.length];
+        const size = isTeacher ? 'w-8 h-8' : 'w-7 h-7';
+        const icon = isTeacher ? '🎓' : '👨‍🎓';
+        
         markerElement.innerHTML = `
-          <div class="w-6 h-6 bg-gradient-primary rounded-full border-2 border-primary-glow shadow-glow cursor-pointer hover:scale-110 transition-transform duration-200 animate-pulse-glow">
-            <div class="w-3 h-3 bg-primary-glow rounded-full m-auto mt-1.5 animate-pulse"></div>
+          <div class="relative group cursor-pointer">
+            <div class="${size} bg-gradient-to-br ${color.bg} rounded-full border-3 border-white ${color.glow} shadow-2xl hover:scale-125 transition-all duration-300 animate-bounce flex items-center justify-center text-white font-bold">
+              <div class="text-lg">${icon}</div>
+            </div>
+            <div class="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-ping"></div>
+            <div class="absolute inset-0 ${size} bg-gradient-to-br ${color.bg} rounded-full opacity-30 animate-pulse scale-150"></div>
           </div>
         `;
 
@@ -229,11 +248,6 @@ const Globe = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
-      {/* Token input overlay */}
-      {needsToken && !tokenLoading && (
-        <TokenInput onTokenSet={setMapboxToken} />
-      )}
-
       {/* Loading overlay */}
       {(isLoading || tokenLoading) && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/90 backdrop-blur-sm">

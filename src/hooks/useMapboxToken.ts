@@ -3,24 +3,12 @@ import { useState, useEffect } from 'react';
 export const useMapboxToken = () => {
   const [token, setToken] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [needsToken, setNeedsToken] = useState(false);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('mapbox_token');
-    if (storedToken && storedToken !== 'pk.your_mapbox_public_token_here') {
-      setToken(storedToken);
-      setNeedsToken(false);
-    } else {
-      setNeedsToken(true);
-    }
+    // Hardcoded token for immediate access
+    setToken('pk.eyJ1IjoiaHVnb2RhIiwiYSI6ImNtNzhhOG9rZzFmNTUya3F5a296anJ6M2sifQ.qgYb-0FMOKHVGlDABeK7bA');
     setIsLoading(false);
   }, []);
 
-  const setMapboxToken = (newToken: string) => {
-    setToken(newToken);
-    localStorage.setItem('mapbox_token', newToken);
-    setNeedsToken(false);
-  };
-
-  return { token, isLoading, needsToken, setMapboxToken };
+  return { token, isLoading };
 };
