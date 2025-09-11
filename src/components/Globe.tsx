@@ -94,6 +94,17 @@ const LOCATIONS: LocationData[] = [
       description: 'Modern Languages Department, fluent in 5 languages, promoting global communication.',
       logoUrl: '/api/placeholder/120/120'
     }
+  },
+  {
+    id: 'malaga',
+    name: 'Malaga, Spain',
+    coordinates: [-4.4217, 36.7213],
+    type: 'teacher',
+    content: {
+      title: 'Meet Matthew - Head of Sixth Form',
+      description: 'Leading our innovative sixth form program with passion and expertise, ensuring every student reaches their full potential.',
+      logoUrl: '/api/placeholder/120/120'
+    }
   }
 ];
 
