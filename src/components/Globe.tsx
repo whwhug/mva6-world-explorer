@@ -112,8 +112,60 @@ const Globe = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
+  const [currentMarkerIndex, setCurrentMarkerIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
   const { token, isLoading: tokenLoading } = useMapboxToken();
+
+  const visitNextDestination = () => {
+    if (isNavigating || !map.current) return;
+    
+    setIsNavigating(true);
+    const nextIndex = (currentMarkerIndex + 1) % LOCATIONS.length;
+    const nextLocation = LOCATIONS[nextIndex];
+    
+    // Smooth camera animation to the marker
+    map.current.flyTo({
+      center: nextLocation.coordinates,
+      zoom: 6,
+      pitch: 45,
+      bearing: 0,
+      speed: 0.8,
+      curve: 1.2,
+      essential: true
+    });
+
+    // Update states after animation starts
+    setTimeout(() => {
+      setCurrentMarkerIndex(nextIndex);
+      setSelectedLocation(nextLocation);
+      setIsNavigating(false);
+    }, 1500);
+  };
+
+  const visitPreviousDestination = () => {
+    if (isNavigating || !map.current) return;
+    
+    setIsNavigating(true);
+    const prevIndex = currentMarkerIndex === 0 ? LOCATIONS.length - 1 : currentMarkerIndex - 1;
+    const prevLocation = LOCATIONS[prevIndex];
+    
+    map.current.flyTo({
+      center: prevLocation.coordinates,
+      zoom: 6,
+      pitch: 45,
+      bearing: 0,
+      speed: 0.8,
+      curve: 1.2,
+      essential: true
+    });
+
+    setTimeout(() => {
+      setCurrentMarkerIndex(prevIndex);
+      setSelectedLocation(prevLocation);
+      setIsNavigating(false);
+    }, 1500);
+  };
 
   useEffect(() => {
     if (!mapContainer.current || tokenLoading || !token) return;
@@ -281,11 +333,27 @@ const Globe = () => {
         </div>
       </div>
 
+      {/* Visit next destination button */}
+      <div className="absolute bottom-6 right-6 z-10">
+        <button
+          onClick={visitNextDestination}
+          disabled={isNavigating}
+          className="bg-primary/90 hover:bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold shadow-lg backdrop-blur-sm border border-primary/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isNavigating ? 'Navigating...' : 'Visit Next Destination →'}
+        </button>
+      </div>
+
       {/* Marker popup */}
       {selectedLocation && (
         <MarkerPopup
           location={selectedLocation}
           onClose={() => setSelectedLocation(null)}
+          onNext={visitNextDestination}
+          onPrevious={visitPreviousDestination}
+          currentIndex={currentMarkerIndex + 1}
+          totalCount={LOCATIONS.length}
+          isNavigating={isNavigating}
         />
       )}
     </div>
