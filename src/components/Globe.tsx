@@ -166,7 +166,6 @@ const Globe = () => {
               <div class="text-lg">${icon}</div>
             </div>
             <div class="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-ping"></div>
-            <div class="absolute inset-0 ${size} bg-gradient-to-br ${color.bg} rounded-full opacity-30 animate-pulse scale-150"></div>
           </div>
         `;
 

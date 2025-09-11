@@ -1,5 +1,6 @@
 import React from 'react';
-import { GraduationCap, Globe } from 'lucide-react';
+import { Globe } from 'lucide-react';
+import mvaLogo from '../assets/mva-logo.png';
 
 const Header = () => {
   return (
@@ -8,8 +9,8 @@ const Header = () => {
         {/* Logo and branding */}
         <div className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-elegant">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gradient-primary rounded-lg">
-              <GraduationCap className="w-6 h-6 text-primary-foreground" />
+            <div className="w-12 h-12 bg-white rounded-lg p-1 flex items-center justify-center">
+              <img src={mvaLogo} alt="Minerva Virtual Academy" className="w-full h-full object-contain" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">Minerva Virtual Academy</h1>
