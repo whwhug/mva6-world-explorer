@@ -53,14 +53,20 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({ location, onClose }) =
         <div className="p-6">
           {/* Media content */}
           {location.content.videoUrl ? (
-            <div className="mb-4 aspect-video bg-muted rounded-lg flex items-center justify-center border border-border">
-              <div className="text-center p-6">
-                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <div className="w-0 h-0 border-l-6 border-l-primary border-t-4 border-t-transparent border-b-4 border-b-transparent ml-1"></div>
-                </div>
-                <p className="text-sm text-muted-foreground">Video Content</p>
-                <p className="text-xs text-muted-foreground mt-1">Student Introduction</p>
-              </div>
+            <div className="mb-4 aspect-video bg-muted rounded-lg overflow-hidden border border-border">
+              <video 
+                src={location.content.videoUrl}
+                controls
+                autoPlay
+                muted
+                loop
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error('Video failed to load:', e);
+                }}
+              >
+                Your browser does not support the video tag.
+              </video>
             </div>
           ) : location.content.logoUrl ? (
             <div className="mb-4 flex justify-center">

@@ -22,11 +22,11 @@ const LOCATIONS: LocationData[] = [
     id: 'london',
     name: 'London, UK',
     coordinates: [-0.1276, 51.5074],
-    type: 'teacher',
+    type: 'student',
     content: {
-      title: 'Prof. Sarah Johnson',
+      title: 'Meet James - MVA6 Student',
       description: 'Mathematics & Sciences Department Head, leading innovative STEM education across our global network.',
-      logoUrl: '/api/placeholder/120/120'
+      videoUrl: 'https://dl.dropboxusercontent.com/scl/fi/75hg013ab1kpekz61p2e0/James-Story.mp4?rlkey=wc34m6o2mk0ojvkjbwro100rx&st=z7u44imv&raw=1'
     }
   },
   {
