@@ -121,6 +121,10 @@ const Globe = () => {
     if (isNavigating || !map.current) return;
     
     setIsNavigating(true);
+    
+    // Close current popup first
+    setSelectedLocation(null);
+    
     const nextIndex = (currentMarkerIndex + 1) % LOCATIONS.length;
     const nextLocation = LOCATIONS[nextIndex];
     
@@ -135,18 +139,22 @@ const Globe = () => {
       essential: true
     });
 
-    // Update states after animation starts
+    // Update states after animation completes and open new popup
     setTimeout(() => {
       setCurrentMarkerIndex(nextIndex);
       setSelectedLocation(nextLocation);
       setIsNavigating(false);
-    }, 1500);
+    }, 2000);
   };
 
   const visitPreviousDestination = () => {
     if (isNavigating || !map.current) return;
     
     setIsNavigating(true);
+    
+    // Close current popup first
+    setSelectedLocation(null);
+    
     const prevIndex = currentMarkerIndex === 0 ? LOCATIONS.length - 1 : currentMarkerIndex - 1;
     const prevLocation = LOCATIONS[prevIndex];
     
@@ -164,7 +172,7 @@ const Globe = () => {
       setCurrentMarkerIndex(prevIndex);
       setSelectedLocation(prevLocation);
       setIsNavigating(false);
-    }, 1500);
+    }, 2000);
   };
 
   useEffect(() => {
@@ -340,7 +348,7 @@ const Globe = () => {
           disabled={isNavigating}
           className="bg-primary/90 hover:bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold shadow-lg backdrop-blur-sm border border-primary/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isNavigating ? 'Navigating...' : 'Visit Next Destination →'}
+          {isNavigating ? 'Navigating...' : (selectedLocation ? 'Visit Next Destination →' : 'Start the Tour →')}
         </button>
       </div>
 
