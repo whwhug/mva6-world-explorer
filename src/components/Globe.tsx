@@ -341,16 +341,6 @@ const Globe = () => {
         </div>
       </div>
 
-      {/* Visit next destination button */}
-      <div className="absolute bottom-6 right-6 z-10">
-        <button
-          onClick={visitNextDestination}
-          disabled={isNavigating}
-          className="bg-primary/90 hover:bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold shadow-lg backdrop-blur-sm border border-primary/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isNavigating ? 'Navigating...' : (selectedLocation ? 'Visit Next Destination →' : 'Start the Tour →')}
-        </button>
-      </div>
 
       {/* Marker popup */}
       {selectedLocation && (
