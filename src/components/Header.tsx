@@ -8,13 +8,13 @@ const Header = () => {
       <div className="flex items-start justify-between">
         {/* Logo and branding */}
         <div className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-elegant">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white rounded-lg p-1 flex items-center justify-center">
-              <img src={mvaLogo} alt="Minerva Virtual Academy" className="w-full h-full object-contain" />
+          <div className="text-center">
+            <div className="w-full mb-3 flex justify-center">
+              <img src={mvaLogo} alt="Minerva Virtual Academy" className="h-12 object-contain" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">Minerva Virtual Academy</h1>
-              <p className="text-sm text-muted-foreground">Online Sixth Form</p>
+              <p className="text-sm text-muted-foreground">A Sixth Form Like No Other</p>
             </div>
           </div>
         </div>
