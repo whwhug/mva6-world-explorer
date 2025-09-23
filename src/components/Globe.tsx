@@ -202,11 +202,7 @@ const Globe = () => {
       const markerElement = document.createElement('div');
       markerElement.className = 'student-marker';
       markerElement.innerHTML = `
-        <div class="w-5 h-5 rounded-full flex items-center justify-center border-2 ${
-          student.isAthlete 
-            ? 'bg-yellow-500 border-yellow-600 text-yellow-900' 
-            : 'bg-blue-500 border-blue-600 text-white'
-        } shadow-lg hover:scale-110 transition-transform cursor-pointer">
+        <div class="w-5 h-5 rounded-full flex items-center justify-center border-2 bg-blue-500 border-blue-600 text-white shadow-lg hover:scale-110 transition-transform cursor-pointer">
           <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
           </svg>
@@ -459,7 +455,7 @@ const Globe = () => {
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-background/20" />
       
       {/* Student toggle control */}
-      <div className="absolute top-20 right-6 z-10 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg">
+      <div className="absolute top-20 right-6 z-10 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
         <div className="flex items-center space-x-3">
           <User className="w-4 h-4 text-foreground" />
           <span className="text-sm font-medium text-foreground">Students</span>
@@ -473,16 +469,6 @@ const Globe = () => {
               <ToggleLeft className="w-6 h-6 text-muted-foreground" />
             )}
           </button>
-        </div>
-        <div className="mt-2 text-xs text-muted-foreground">
-          <div className="flex items-center space-x-2 mb-1">
-            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-            <span>Regular students</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <span>Athletes</span>
-          </div>
         </div>
       </div>
 
