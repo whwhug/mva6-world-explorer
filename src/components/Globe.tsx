@@ -321,16 +321,7 @@ const Globe = () => {
 
   // Toggle student markers visibility
   const toggleStudents = () => {
-    const newShowStudents = !showStudents;
-    setShowStudents(newShowStudents);
-
-    studentMarkers.forEach(marker => {
-      if (newShowStudents) {
-        marker.addTo(map.current!);
-      } else {
-        marker.remove();
-      }
-    });
+    setShowStudents(!showStudents);
   };
 
   const toggleTeachers = () => {
@@ -339,16 +330,7 @@ const Globe = () => {
   };
 
   const toggleUniversities = () => {
-    const newShowUniversities = !showUniversities;
-    setShowUniversities(newShowUniversities);
-
-    universityMarkers.forEach(marker => {
-      if (newShowUniversities) {
-        marker.addTo(map.current!);
-      } else {
-        marker.remove();
-      }
-    });
+    setShowUniversities(!showUniversities);
   };
 
   useEffect(() => {
