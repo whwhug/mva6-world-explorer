@@ -50,7 +50,9 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({
               <h3 className="text-lg font-semibold text-foreground">{location.content.title}</h3>
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <MapPin className="w-3 h-3" />
-                {location.name}
+                {location.type === 'student' 
+                  ? location.name.split(', ').pop() || location.name 
+                  : location.name}
               </div>
             </div>
           </div>
