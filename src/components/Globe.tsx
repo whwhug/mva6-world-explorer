@@ -562,24 +562,8 @@ const Globe = () => {
         <p className="text-lg text-white/90 drop-shadow-lg mt-2">October 16th 2025, 6pm BST</p>
       </div>
       
-      {/* Next Stop Button - Right side */}
-      <div className="absolute top-6 right-6 z-20">
-        <button
-          onClick={visitNextDestination}
-          disabled={isNavigating}
-          className="bg-primary/90 hover:bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm border border-primary/20 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <div className="flex items-center gap-2">
-            <span className="font-medium">Next Stop</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-        </button>
-      </div>
-      
-      {/* Layer Controls - Positioned on bottom right */}
-      <div className="absolute bottom-6 right-6 z-20 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg min-w-[180px]">
+      {/* Layer Controls - Positioned on top right with extra margin for zoom controls */}
+      <div className="absolute top-6 right-24 z-20 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg min-w-[180px]">
         <h3 className="text-sm font-semibold text-foreground mb-3">Map Layers</h3>
         
         {/* Students Toggle */}
@@ -640,6 +624,22 @@ const Globe = () => {
             )}
           </button>
         </div>
+      </div>
+
+      {/* Next Stop Button - Bottom right */}
+      <div className="absolute bottom-6 right-6 z-20">
+        <button
+          onClick={visitNextDestination}
+          disabled={isNavigating}
+          className="bg-primary/90 hover:bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm border border-primary/20 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <div className="flex items-center gap-2">
+            <span className="font-medium">Next Stop</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </button>
       </div>
 
 
