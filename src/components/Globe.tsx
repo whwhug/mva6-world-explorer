@@ -4,7 +4,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { MarkerPopup } from './MarkerPopup';
 import { useMapboxToken } from '../hooks/useMapboxToken';
 import { parseStudentData, Student } from '../utils/studentData';
-import { User, ToggleLeft, ToggleRight } from 'lucide-react';
+import { parseUniversityData, University } from '../utils/universityData';
+import { User, ToggleLeft, ToggleRight, GraduationCap } from 'lucide-react';
 
 interface LocationData {
   id: string;
@@ -118,10 +119,12 @@ const Globe = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isNavigating, setIsNavigating] = useState(false);
   const [students, setStudents] = useState<Student[]>([]);
+  const [universities, setUniversities] = useState<University[]>([]);
   const [showStudents, setShowStudents] = useState(true);
   const [showTeachers, setShowTeachers] = useState(true);
   const [showUniversities, setShowUniversities] = useState(true);
   const [studentMarkers, setStudentMarkers] = useState<mapboxgl.Marker[]>([]);
+  const [universityMarkers, setUniversityMarkers] = useState<mapboxgl.Marker[]>([]);
   const { token, isLoading: tokenLoading } = useMapboxToken();
 
   const visitNextDestination = () => {
@@ -249,6 +252,73 @@ const Globe = () => {
     setStudentMarkers(newMarkers);
   };
 
+  // Add university markers to the map
+  const addUniversityMarkers = () => {
+    if (!map.current || universities.length === 0) return;
+
+    // Remove existing university markers
+    universityMarkers.forEach(marker => {
+      marker.remove();
+      if ((marker as any).tooltip) {
+        document.body.removeChild((marker as any).tooltip);
+      }
+    });
+    setUniversityMarkers([]);
+
+    const newMarkers: mapboxgl.Marker[] = [];
+
+    universities.forEach((university) => {
+      // Create marker element with graduation cap icon
+      const markerElement = document.createElement('div');
+      markerElement.className = 'university-marker';
+      markerElement.innerHTML = `
+        <div class="w-6 h-6 rounded-lg flex items-center justify-center border-2 bg-purple-500 border-purple-600 text-white shadow-lg hover:scale-110 transition-transform cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+      `;
+
+      // Create tooltip
+      const tooltip = document.createElement('div');
+      tooltip.className = 'university-tooltip hidden absolute bg-background border border-border rounded-lg p-3 shadow-lg z-50 min-w-[250px] pointer-events-none';
+      tooltip.innerHTML = `
+        <div class="text-sm font-medium text-foreground mb-1">MVA6 Alumni</div>
+        <div class="text-sm text-muted-foreground mb-1">${university.university}</div>
+        ${university.course ? `<div class="text-sm text-muted-foreground mb-1">${university.course}</div>` : ''}
+        <div class="text-sm text-foreground font-medium">Pin location</div>
+        <div class="text-sm text-foreground font-medium">${university.location}</div>
+      `;
+
+      document.body.appendChild(tooltip);
+
+      // Add hover events
+      markerElement.addEventListener('mouseenter', (e) => {
+        tooltip.classList.remove('hidden');
+        const rect = markerElement.getBoundingClientRect();
+        tooltip.style.left = `${rect.left + rect.width + 10}px`;
+        tooltip.style.top = `${rect.top + rect.height / 2 - tooltip.offsetHeight / 2}px`;
+      });
+
+      markerElement.addEventListener('mouseleave', () => {
+        tooltip.classList.add('hidden');
+      });
+
+      // Create marker
+      const marker = new mapboxgl.Marker(markerElement)
+        .setLngLat(university.coordinates)
+        .addTo(map.current!);
+
+      newMarkers.push(marker);
+
+      // Store tooltip reference for cleanup
+      (marker as any).tooltip = tooltip;
+    });
+
+    setUniversityMarkers(newMarkers);
+  };
+
   // Toggle student markers visibility
   const toggleStudents = () => {
     const newShowStudents = !showStudents;
@@ -269,16 +339,26 @@ const Globe = () => {
   };
 
   const toggleUniversities = () => {
-    setShowUniversities(!showUniversities);
-    // TODO: Implement university marker toggle when university data is added
+    const newShowUniversities = !showUniversities;
+    setShowUniversities(newShowUniversities);
+
+    universityMarkers.forEach(marker => {
+      if (newShowUniversities) {
+        marker.addTo(map.current!);
+      } else {
+        marker.remove();
+      }
+    });
   };
 
   useEffect(() => {
     if (!mapContainer.current || tokenLoading || !token) return;
 
-    // Parse student data
+    // Parse student and university data
     const studentData = parseStudentData();
+    const universityData = parseUniversityData();
     setStudents(studentData);
+    setUniversities(universityData);
 
     // Initialize map with API key from hook
     mapboxgl.accessToken = token;
@@ -352,8 +432,9 @@ const Globe = () => {
           .addTo(map.current!);
       });
 
-      // Add student markers after main markers are loaded
+      // Add student and university markers after main markers are loaded
       addStudentMarkers();
+      addUniversityMarkers();
 
       setIsLoading(false);
     });
@@ -424,6 +505,13 @@ const Globe = () => {
           document.body.removeChild((marker as any).tooltip);
         }
       });
+      // Remove university markers and tooltips
+      universityMarkers.forEach(marker => {
+        marker.remove();
+        if ((marker as any).tooltip) {
+          document.body.removeChild((marker as any).tooltip);
+        }
+      });
       map.current?.remove();
     };
   }, [token, tokenLoading]);
@@ -434,6 +522,13 @@ const Globe = () => {
       addStudentMarkers();
     }
   }, [students]);
+
+  // Update university markers when universities data changes
+  useEffect(() => {
+    if (map.current && universities.length > 0) {
+      addUniversityMarkers();
+    }
+  }, [universities]);
 
   // Update marker visibility when toggle changes
   useEffect(() => {
@@ -447,6 +542,19 @@ const Globe = () => {
       });
     }
   }, [showStudents, studentMarkers]);
+
+  // Update university marker visibility when toggle changes
+  useEffect(() => {
+    if (universityMarkers.length > 0) {
+      universityMarkers.forEach(marker => {
+        if (showUniversities) {
+          marker.addTo(map.current!);
+        } else {
+          marker.remove();
+        }
+      });
+    }
+  }, [showUniversities, universityMarkers]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -518,23 +626,21 @@ const Globe = () => {
           </button>
         </div>
 
-        {/* Universities Toggle - Prepared for future data */}
+        {/* Universities Toggle */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+            <GraduationCap className="w-3 h-3 text-purple-500" />
             <span className="text-sm text-foreground">Universities</span>
           </div>
           <button
             onClick={toggleUniversities}
             className="flex items-center p-1 rounded transition-colors hover:bg-muted"
             aria-label="Toggle universities"
-            disabled={true}
-            title="Coming soon"
           >
             {showUniversities ? (
-              <ToggleRight className="w-5 h-5 text-muted-foreground/50" />
+              <ToggleRight className="w-5 h-5 text-primary" />
             ) : (
-              <ToggleLeft className="w-5 h-5 text-muted-foreground/50" />
+              <ToggleLeft className="w-5 h-5 text-muted-foreground" />
             )}
           </button>
         </div>
