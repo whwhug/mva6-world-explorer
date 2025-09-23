@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe } from 'lucide-react';
+
 import mvaLogo from '../assets/mva-logo.png';
 
 const Header = () => {
@@ -19,14 +19,6 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Event info */}
-        <div className="bg-card/80 backdrop-blur-sm border border-border rounded-xl p-4 shadow-elegant text-right">
-          <div className="flex items-center gap-2 justify-end mb-1">
-            <Globe className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-foreground">Open Event</span>
-          </div>
-          <p className="text-xs text-muted-foreground">Discover Our Global Community</p>
-        </div>
       </div>
     </header>
   );
