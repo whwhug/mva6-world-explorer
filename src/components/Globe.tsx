@@ -119,6 +119,8 @@ const Globe = () => {
   const [isNavigating, setIsNavigating] = useState(false);
   const [students, setStudents] = useState<Student[]>([]);
   const [showStudents, setShowStudents] = useState(true);
+  const [showTeachers, setShowTeachers] = useState(true);
+  const [showUniversities, setShowUniversities] = useState(true);
   const [studentMarkers, setStudentMarkers] = useState<mapboxgl.Marker[]>([]);
   const { token, isLoading: tokenLoading } = useMapboxToken();
 
@@ -259,6 +261,16 @@ const Globe = () => {
         marker.remove();
       }
     });
+  };
+
+  const toggleTeachers = () => {
+    setShowTeachers(!showTeachers);
+    // TODO: Implement teacher marker toggle when teacher data is added
+  };
+
+  const toggleUniversities = () => {
+    setShowUniversities(!showUniversities);
+    // TODO: Implement university marker toggle when university data is added
   };
 
   useEffect(() => {
@@ -454,19 +466,67 @@ const Globe = () => {
       {/* Gradient overlay for better contrast */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-background/20" />
       
-      {/* Student toggle control */}
-      <div className="absolute top-20 right-6 z-10 bg-background/80 backdrop-blur-sm border border-border rounded-lg p-3 shadow-lg">
-        <div className="flex items-center space-x-3">
-          <User className="w-4 h-4 text-foreground" />
-          <span className="text-sm font-medium text-foreground">Students</span>
+      {/* Layer Controls - Positioned to avoid popup interference */}
+      <div className="absolute top-6 left-6 z-20 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg min-w-[180px]">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Map Layers</h3>
+        
+        {/* Students Toggle */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+            <span className="text-sm text-foreground">Students</span>
+          </div>
           <button
             onClick={toggleStudents}
-            className="flex items-center space-x-1 p-1 rounded transition-colors hover:bg-muted"
+            className="flex items-center p-1 rounded transition-colors hover:bg-muted"
+            aria-label="Toggle students"
           >
             {showStudents ? (
-              <ToggleRight className="w-6 h-6 text-primary" />
+              <ToggleRight className="w-5 h-5 text-primary" />
             ) : (
-              <ToggleLeft className="w-6 h-6 text-muted-foreground" />
+              <ToggleLeft className="w-5 h-5 text-muted-foreground" />
+            )}
+          </button>
+        </div>
+
+        {/* Teachers Toggle - Prepared for future data */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            <span className="text-sm text-foreground">Teachers</span>
+          </div>
+          <button
+            onClick={toggleTeachers}
+            className="flex items-center p-1 rounded transition-colors hover:bg-muted"
+            aria-label="Toggle teachers"
+            disabled={true}
+            title="Coming soon"
+          >
+            {showTeachers ? (
+              <ToggleRight className="w-5 h-5 text-muted-foreground/50" />
+            ) : (
+              <ToggleLeft className="w-5 h-5 text-muted-foreground/50" />
+            )}
+          </button>
+        </div>
+
+        {/* Universities Toggle - Prepared for future data */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+            <span className="text-sm text-foreground">Universities</span>
+          </div>
+          <button
+            onClick={toggleUniversities}
+            className="flex items-center p-1 rounded transition-colors hover:bg-muted"
+            aria-label="Toggle universities"
+            disabled={true}
+            title="Coming soon"
+          >
+            {showUniversities ? (
+              <ToggleRight className="w-5 h-5 text-muted-foreground/50" />
+            ) : (
+              <ToggleLeft className="w-5 h-5 text-muted-foreground/50" />
             )}
           </button>
         </div>
