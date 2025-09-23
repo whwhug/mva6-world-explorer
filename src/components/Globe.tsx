@@ -574,16 +574,8 @@ const Globe = () => {
       {/* Gradient overlay for better contrast */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-background/20" />
       
-      {/* Centered Open Event Title */}
-      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="bg-background/90 backdrop-blur-sm border border-border rounded-lg px-6 py-3 shadow-lg">
-          <h1 className="text-lg font-bold text-foreground text-center">Open Event</h1>
-          <p className="text-sm text-muted-foreground text-center mt-1">Discover Our Global Community</p>
-        </div>
-      </div>
-
-      {/* Layer Controls - Positioned on right side below zoom controls */}
-      <div className="absolute top-24 right-6 z-20 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg min-w-[180px]">
+      {/* Layer Controls - Positioned on bottom right */}
+      <div className="absolute bottom-6 right-6 z-20 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg min-w-[180px]">
         <h3 className="text-sm font-semibold text-foreground mb-3">Map Layers</h3>
         
         {/* Students Toggle */}
@@ -647,7 +639,7 @@ const Globe = () => {
       </div>
 
       {/* Instructions */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
+      <div className="absolute bottom-6 left-6 z-10">
         <div className="bg-card/80 backdrop-blur-sm border border-border rounded-lg px-4 py-2 text-sm text-muted-foreground text-center">
           Click markers to explore our global community • Drag to rotate • Scroll to zoom
         </div>
