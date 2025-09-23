@@ -192,8 +192,8 @@ const Globe = () => {
     // Remove existing student markers
     studentMarkers.forEach(marker => {
       marker.remove();
-      if ((marker as any).tooltip) {
-        document.body.removeChild((marker as any).tooltip);
+      if ((marker as any).tooltip && (marker as any).tooltip.parentNode) {
+        (marker as any).tooltip.parentNode.removeChild((marker as any).tooltip);
       }
     });
     setStudentMarkers([]);
@@ -259,8 +259,8 @@ const Globe = () => {
     // Remove existing university markers
     universityMarkers.forEach(marker => {
       marker.remove();
-      if ((marker as any).tooltip) {
-        document.body.removeChild((marker as any).tooltip);
+      if ((marker as any).tooltip && (marker as any).tooltip.parentNode) {
+        (marker as any).tooltip.parentNode.removeChild((marker as any).tooltip);
       }
     });
     setUniversityMarkers([]);
@@ -501,15 +501,15 @@ const Globe = () => {
       // Remove student markers and tooltips
       studentMarkers.forEach(marker => {
         marker.remove();
-        if ((marker as any).tooltip) {
-          document.body.removeChild((marker as any).tooltip);
+        if ((marker as any).tooltip && (marker as any).tooltip.parentNode) {
+          (marker as any).tooltip.parentNode.removeChild((marker as any).tooltip);
         }
       });
       // Remove university markers and tooltips
       universityMarkers.forEach(marker => {
         marker.remove();
-        if ((marker as any).tooltip) {
-          document.body.removeChild((marker as any).tooltip);
+        if ((marker as any).tooltip && (marker as any).tooltip.parentNode) {
+          (marker as any).tooltip.parentNode.removeChild((marker as any).tooltip);
         }
       });
       map.current?.remove();
