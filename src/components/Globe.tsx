@@ -575,7 +575,7 @@ const Globe = () => {
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-background/20" />
       
       {/* Event Title - Centered at top */}
-      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10 text-center">
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10 text-center pointer-events-none">
         <h1 className="text-2xl font-bold text-white drop-shadow-lg">Open Event</h1>
         <p className="text-lg text-white/90 drop-shadow-lg mt-2">October 16th 2025, 6pm BST</p>
       </div>

@@ -110,3 +110,17 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Ensure Mapbox controls are properly positioned and not blocked */
+.mapboxgl-control-container {
+  z-index: 1000 !important;
+}
+
+.mapboxgl-ctrl-top-right {
+  z-index: 1000 !important;
+  pointer-events: auto !important;
+}
+
+.mapboxgl-ctrl-group {
+  z-index: 1000 !important;
+}
