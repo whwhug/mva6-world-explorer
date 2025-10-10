@@ -20,96 +20,43 @@ interface LocationData {
   };
 }
 
-const LOCATIONS: LocationData[] = [
-  {
-    id: 'london',
-    name: 'London, UK',
-    coordinates: [-0.1276, 51.5074],
-    type: 'student',
-    content: {
-      title: 'Meet James - MVA6 Student',
-      description: 'Mathematics & Sciences Department Head, leading innovative STEM education across our global network.',
-      videoUrl: 'https://dl.dropboxusercontent.com/scl/fi/75hg013ab1kpekz61p2e0/James-Story.mp4?rlkey=wc34m6o2mk0ojvkjbwro100rx&st=z7u44imv&raw=1'
-    }
+// Tour content mapping - in order of tour stops
+const TOUR_CONTENT: Record<string, { description: string; videoUrl?: string }> = {
+  'Ayoub': {
+    description: 'Day in the Life video',
+    videoUrl: 'https://dl.dropboxusercontent.com/scl/fi/75hg013ab1kpekz61p2e0/James-Story.mp4?rlkey=wc34m6o2mk0ojvkjbwro100rx&st=z7u44imv&raw=1'
   },
-  {
-    id: 'newyork',
-    name: 'New York, USA',
-    coordinates: [-74.0060, 40.7128],
-    type: 'student',
-    content: {
-      title: 'Alex Chen',
-      description: 'A-Level student pursuing Computer Science and Mathematics, passionate about AI and machine learning.',
-      videoUrl: '/api/placeholder/400/300'
-    }
+  'Rebecca Pinfield': {
+    description: 'Sample timetable ("Erin\'s timetable") + Flipped Learning video. Explains teaching approach: Four Pillars + Flipped Learning'
   },
-  {
-    id: 'sydney',
-    name: 'Sydney, Australia',
-    coordinates: [151.2093, -33.8688],
-    type: 'teacher',
-    content: {
-      title: 'Dr. Emma Wilson',
-      description: 'English Literature specialist, bringing world-class humanities education to students globally.',
-      logoUrl: '/api/placeholder/120/120'
-    }
+  'Student TBC': {
+    description: 'Matthew hosts Q&A with student'
   },
-  {
-    id: 'tokyo',
-    name: 'Tokyo, Japan',
-    coordinates: [139.6503, 35.6762],
-    type: 'student',
-    content: {
-      title: 'Yuki Tanaka',
-      description: 'International Baccalaureate student focusing on Physics and Chemistry, future engineer.',
-      videoUrl: '/api/placeholder/400/300'
-    }
+  'Matthew Morris': {
+    description: 'List of MVA6 subjects. Matthew explains subject options (A Levels + EPQ). Sixth Form Subject Guide shared in chat for download'
   },
-  {
-    id: 'singapore',
-    name: 'Singapore',
-    coordinates: [103.8198, 1.3521],
-    type: 'teacher',
-    content: {
-      title: 'Mr. Raj Patel',
-      description: 'Economics and Business Studies teacher, preparing students for global careers.',
-      logoUrl: '/api/placeholder/120/120'
-    }
+  'Clare': {
+    description: 'Video of Clare introducing Maths'
   },
-  {
-    id: 'capetown',
-    name: 'Cape Town, South Africa',
-    coordinates: [18.4241, -33.9249],
-    type: 'student',
-    content: {
-      title: 'Amara Okafor',
-      description: 'A-Level Biology and Chemistry student, aspiring medical researcher and doctor.',
-      videoUrl: '/api/placeholder/400/300'
-    }
+  'Rachel': {
+    description: 'Recording of Rachel introducing English'
   },
-  {
-    id: 'saopaulo',
-    name: 'São Paulo, Brazil',
-    coordinates: [-46.6333, -23.5505],
-    type: 'teacher',
-    content: {
-      title: 'Dr. Carlos Martinez',
-      description: 'Modern Languages Department, fluent in 5 languages, promoting global communication.',
-      logoUrl: '/api/placeholder/120/120'
-    }
+  'Peter Stiller': {
+    description: 'University of Reading badge, IAME COTF badges, karting photo. Matthew interviews Peter (2–3 minutes)'
   },
-  {
-    id: 'malaga',
-    name: 'Malaga, Spain',
-    coordinates: [-4.4217, 36.7213],
-    type: 'teacher',
-    content: {
-      title: 'Meet Matthew - Head of Sixth Form',
-      description: 'Leading our innovative sixth form program with passion and expertise, ensuring every student reaches their full potential.',
-      logoUrl: '/api/placeholder/120/120'
-    }
+  'Laura': {
+    description: '1-minute video on Careers & Futures at MVA6'
+  },
+  'Sophie': {
+    description: 'Day in the Life video'
+  },
+  'Isabelle': {
+    description: 'Q&A graphic'
+  },
+  'MVA6': {
+    description: 'Graduation video'
   }
-];
+};
 
 const Globe = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -125,18 +72,63 @@ const Globe = () => {
   const [showUniversities, setShowUniversities] = useState(true);
   const [studentMarkers, setStudentMarkers] = useState<mapboxgl.Marker[]>([]);
   const [universityMarkers, setUniversityMarkers] = useState<mapboxgl.Marker[]>([]);
+  const [tourLocations, setTourLocations] = useState<LocationData[]>([]);
   const { token, isLoading: tokenLoading } = useMapboxToken();
 
+  // Build tour locations from student and university data
+  useEffect(() => {
+    if (students.length === 0 && universities.length === 0) return;
+
+    const locations: LocationData[] = [];
+
+    // Add students to tour
+    students.forEach(student => {
+      const contentInfo = TOUR_CONTENT[student.name];
+      if (contentInfo) {
+        locations.push({
+          id: student.id,
+          name: `${student.town}, ${student.country}`,
+          coordinates: student.coordinates,
+          type: 'student',
+          content: {
+            title: `${student.name} - MVA6 Student`,
+            description: contentInfo.description,
+            videoUrl: contentInfo.videoUrl
+          }
+        });
+      }
+    });
+
+    // Add universities/staff to tour
+    universities.forEach(university => {
+      const contentInfo = TOUR_CONTENT[university.name];
+      if (contentInfo) {
+        locations.push({
+          id: `uni-${university.id}`,
+          name: `${university.town}, ${university.location}`,
+          coordinates: university.coordinates,
+          type: 'teacher',
+          content: {
+            title: `${university.name} - ${university.role}`,
+            description: contentInfo.description
+          }
+        });
+      }
+    });
+
+    setTourLocations(locations);
+  }, [students, universities]);
+
   const visitNextDestination = () => {
-    if (isNavigating || !map.current) return;
+    if (isNavigating || !map.current || tourLocations.length === 0) return;
     
     setIsNavigating(true);
     
     // Close current popup first
     setSelectedLocation(null);
     
-    const nextIndex = (currentMarkerIndex + 1) % LOCATIONS.length;
-    const nextLocation = LOCATIONS[nextIndex];
+    const nextIndex = (currentMarkerIndex + 1) % tourLocations.length;
+    const nextLocation = tourLocations[nextIndex];
     
     // Smooth camera animation to the marker
     map.current.flyTo({
@@ -158,15 +150,15 @@ const Globe = () => {
   };
 
   const visitPreviousDestination = () => {
-    if (isNavigating || !map.current) return;
+    if (isNavigating || !map.current || tourLocations.length === 0) return;
     
     setIsNavigating(true);
     
     // Close current popup first
     setSelectedLocation(null);
     
-    const prevIndex = currentMarkerIndex === 0 ? LOCATIONS.length - 1 : currentMarkerIndex - 1;
-    const prevLocation = LOCATIONS[prevIndex];
+    const prevIndex = currentMarkerIndex === 0 ? tourLocations.length - 1 : currentMarkerIndex - 1;
+    const prevLocation = tourLocations[prevIndex];
     
     map.current.flyTo({
       center: prevLocation.coordinates,
@@ -379,46 +371,7 @@ const Globe = () => {
         'star-intensity': 0.2
       });
 
-      // Add enhanced markers after style loads
-      LOCATIONS.forEach((location, index) => {
-        const markerElement = document.createElement('div');
-        markerElement.className = 'globe-marker';
-        
-        const isTeacher = location.type === 'teacher';
-        const colors = [
-          { bg: 'from-pink-500 to-rose-500', glow: 'shadow-pink-500/50' },
-          { bg: 'from-blue-500 to-cyan-500', glow: 'shadow-blue-500/50' },
-          { bg: 'from-green-500 to-emerald-500', glow: 'shadow-green-500/50' },
-          { bg: 'from-purple-500 to-violet-500', glow: 'shadow-purple-500/50' },
-          { bg: 'from-orange-500 to-amber-500', glow: 'shadow-orange-500/50' },
-          { bg: 'from-teal-500 to-cyan-500', glow: 'shadow-teal-500/50' },
-          { bg: 'from-indigo-500 to-blue-500', glow: 'shadow-indigo-500/50' },
-        ];
-        
-        const color = colors[index % colors.length];
-        const size = isTeacher ? 'w-8 h-8' : 'w-7 h-7';
-        const icon = isTeacher ? '🎓' : '👨‍🎓';
-        
-        markerElement.innerHTML = `
-          <div class="relative group cursor-pointer">
-            <div class="${size} bg-gradient-to-br ${color.bg} rounded-full border-3 border-white ${color.glow} shadow-2xl hover:scale-125 transition-all duration-300 animate-bounce flex items-center justify-center text-white font-bold">
-              <div class="text-lg">${icon}</div>
-            </div>
-            <div class="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-ping"></div>
-          </div>
-        `;
-
-        // Add click event to marker
-        markerElement.addEventListener('click', () => {
-          setSelectedLocation(location);
-        });
-
-        new mapboxgl.Marker(markerElement)
-          .setLngLat(location.coordinates)
-          .addTo(map.current!);
-      });
-
-      // Add student and university markers after main markers are loaded
+      // Add student and university markers after style loads
       addStudentMarkers();
       addUniversityMarkers();
 
@@ -542,6 +495,53 @@ const Globe = () => {
     }
   }, [showUniversities, universityMarkers]);
 
+  // Add tour markers when tourLocations are ready
+  useEffect(() => {
+    if (!map.current || tourLocations.length === 0) return;
+
+    // Remove any existing tour markers (stored globally for cleanup)
+    const existingMarkers = document.querySelectorAll('.globe-marker');
+    existingMarkers.forEach(marker => marker.remove());
+
+    tourLocations.forEach((location, index) => {
+      const markerElement = document.createElement('div');
+      markerElement.className = 'globe-marker';
+      
+      const isTeacher = location.type === 'teacher';
+      const colors = [
+        { bg: 'from-pink-500 to-rose-500', glow: 'shadow-pink-500/50' },
+        { bg: 'from-blue-500 to-cyan-500', glow: 'shadow-blue-500/50' },
+        { bg: 'from-green-500 to-emerald-500', glow: 'shadow-green-500/50' },
+        { bg: 'from-purple-500 to-violet-500', glow: 'shadow-purple-500/50' },
+        { bg: 'from-orange-500 to-amber-500', glow: 'shadow-orange-500/50' },
+        { bg: 'from-teal-500 to-cyan-500', glow: 'shadow-teal-500/50' },
+        { bg: 'from-indigo-500 to-blue-500', glow: 'shadow-indigo-500/50' },
+      ];
+      
+      const color = colors[index % colors.length];
+      const size = isTeacher ? 'w-8 h-8' : 'w-7 h-7';
+      const icon = isTeacher ? '🎓' : '👨‍🎓';
+      
+      markerElement.innerHTML = `
+        <div class="relative group cursor-pointer">
+          <div class="${size} bg-gradient-to-br ${color.bg} rounded-full border-3 border-white ${color.glow} shadow-2xl hover:scale-125 transition-all duration-300 animate-bounce flex items-center justify-center text-white font-bold">
+            <div class="text-lg">${icon}</div>
+          </div>
+          <div class="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-ping"></div>
+        </div>
+      `;
+
+      // Add click event to marker
+      markerElement.addEventListener('click', () => {
+        setSelectedLocation(location);
+      });
+
+      new mapboxgl.Marker(markerElement)
+        .setLngLat(location.coordinates)
+        .addTo(map.current!);
+    });
+  }, [tourLocations]);
+
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Loading overlay */}
@@ -634,10 +634,10 @@ const Globe = () => {
       <div className="absolute bottom-6 right-6 z-20 flex gap-3">
         <button
           onClick={() => {
-            setCurrentMarkerIndex(0);
+            setCurrentMarkerIndex(-1);
             visitNextDestination();
           }}
-          disabled={isNavigating}
+          disabled={isNavigating || tourLocations.length === 0}
           className="bg-secondary/90 hover:bg-secondary text-secondary-foreground px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm border border-secondary/20 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <div className="flex items-center gap-2">
@@ -669,11 +669,11 @@ const Globe = () => {
         <MarkerPopup
           location={selectedLocation}
           onClose={() => setSelectedLocation(null)}
-          onNext={visitNextDestination}
-          onPrevious={visitPreviousDestination}
-          currentIndex={currentMarkerIndex + 1}
-          totalCount={LOCATIONS.length}
-          isNavigating={isNavigating}
+        onNext={visitNextDestination}
+        onPrevious={visitPreviousDestination}
+        currentIndex={currentMarkerIndex + 1}
+        totalCount={tourLocations.length}
+        isNavigating={isNavigating}
         />
       )}
     </div>
