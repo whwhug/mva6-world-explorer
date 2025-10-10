@@ -219,9 +219,9 @@ const Globe = () => {
       tooltip.className = 'student-tooltip hidden absolute bg-background border border-border rounded-lg p-3 shadow-lg z-50 min-w-[200px] pointer-events-none';
       tooltip.innerHTML = `
         <div class="text-sm font-medium text-foreground mb-1">MVA6 Student</div>
+        <div class="text-sm text-muted-foreground mb-1">${student.name}</div>
         <div class="text-sm text-muted-foreground mb-1">Year ${student.year}</div>
-        ${student.isAthlete ? '<div class="text-sm text-yellow-600 mb-1 font-medium">Young athlete</div>' : ''}
-        <div class="text-sm text-foreground font-medium">${student.town}, ${student.country}</div>
+        <div class="text-sm text-foreground font-medium">${student.country}</div>
       `;
 
       document.body.appendChild(tooltip);
@@ -284,11 +284,15 @@ const Globe = () => {
       const tooltip = document.createElement('div');
       tooltip.className = 'university-tooltip hidden absolute bg-background border border-border rounded-lg p-3 shadow-lg z-50 min-w-[250px] pointer-events-none';
       tooltip.innerHTML = `
-        <div class="text-sm font-medium text-foreground mb-1">MVA6 Alumni</div>
-        <div class="text-sm text-muted-foreground mb-1">${university.university}</div>
-        ${university.course ? `<div class="text-sm text-muted-foreground mb-1">${university.course}</div>` : ''}
-        <div class="text-sm text-foreground font-medium">Pin location</div>
-        <div class="text-sm text-foreground font-medium">${university.location}</div>
+        <div class="text-sm font-medium text-foreground mb-1">${university.name}</div>
+        <div class="text-sm text-muted-foreground mb-1">${university.role}</div>
+        <div class="flex items-center gap-1 text-sm text-foreground font-medium mt-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>${university.town}, ${university.location}</span>
+        </div>
       `;
 
       document.body.appendChild(tooltip);
