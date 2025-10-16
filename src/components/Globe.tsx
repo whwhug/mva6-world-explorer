@@ -367,7 +367,7 @@ const Globe = () => {
     initializeData();
 
     // Initialize map - token can be added later
-    mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN_HERE';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaHVnb2RhIiwiYSI6ImNtNzhhOG9rZzFmNTUya3F5a296anJ6M2sifQ.qgYb-0FMOKHVGlDABeK7bA';
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
