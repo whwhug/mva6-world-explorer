@@ -75,44 +75,65 @@ const Globe = () => {
   const [tourLocations, setTourLocations] = useState<LocationData[]>([]);
   const { token, isLoading: tokenLoading } = useMapboxToken();
 
-  // Build tour locations from student and university data
+  // Build tour locations from student and university data - IN ORDER
   useEffect(() => {
     if (students.length === 0 && universities.length === 0) return;
 
+    // Define tour order by name
+    const tourOrder = [
+      'Ayoub', // Tunisia
+      'Rebecca Pinfield', // East London
+      'Student TBC', // London
+      'Matthew Morris', // Spain
+      'Clare', // Northern Ireland
+      'Rachel', // Cambridge
+      'Peter Stiller', // Reading
+      'Laura', // Dubai
+      'Sophie', // Taiwan
+      'Isabelle', // Bristol
+      'MVA6' // Holborn - Graduation
+    ];
+
     const locations: LocationData[] = [];
 
-    // Add students to tour
-    students.forEach(student => {
-      const contentInfo = TOUR_CONTENT[student.name];
-      if (contentInfo) {
-        locations.push({
-          id: student.id,
-          name: `${student.town}, ${student.country}`,
-          coordinates: student.coordinates,
-          type: 'student',
-          content: {
-            title: `${student.name} - MVA6 Student`,
-            description: contentInfo.description,
-            videoUrl: contentInfo.videoUrl
-          }
-        });
+    // Build tour in the specified order
+    tourOrder.forEach(name => {
+      // Check if it's a student
+      const student = students.find(s => s.name === name);
+      if (student) {
+        const contentInfo = TOUR_CONTENT[name];
+        if (contentInfo) {
+          locations.push({
+            id: student.id,
+            name: `${student.town}, ${student.country}`,
+            coordinates: student.coordinates,
+            type: 'student',
+            content: {
+              title: `${student.name} - MVA6 Student`,
+              description: contentInfo.description,
+              videoUrl: contentInfo.videoUrl
+            }
+          });
+        }
+        return;
       }
-    });
 
-    // Add universities/staff to tour
-    universities.forEach(university => {
-      const contentInfo = TOUR_CONTENT[university.name];
-      if (contentInfo) {
-        locations.push({
-          id: `uni-${university.id}`,
-          name: `${university.town}, ${university.location}`,
-          coordinates: university.coordinates,
-          type: 'teacher',
-          content: {
-            title: `${university.name} - ${university.role}`,
-            description: contentInfo.description
-          }
-        });
+      // Check if it's a university/staff member
+      const university = universities.find(u => u.name === name);
+      if (university) {
+        const contentInfo = TOUR_CONTENT[name];
+        if (contentInfo) {
+          locations.push({
+            id: `uni-${university.id}`,
+            name: `${university.town}, ${university.location}`,
+            coordinates: university.coordinates,
+            type: 'teacher',
+            content: {
+              title: `${university.name} - ${university.role}`,
+              description: contentInfo.description
+            }
+          });
+        }
       }
     });
 
