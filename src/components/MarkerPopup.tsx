@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, MapPin, GraduationCap, Users, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import { X, MapPin, GraduationCap, Users, ChevronLeft, ChevronRight, Maximize2, Play } from 'lucide-react';
 import rebeccaTimetable from '@/assets/rebecca-timetable.avif';
+import flippedLearningVideo from '@/assets/flipped-learning.mp4';
 
 interface LocationData {
   id: string;
@@ -36,6 +37,7 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({
   isNavigating 
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   return (
     <>
@@ -55,6 +57,28 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({
           alt="Full screen view"
           className="max-w-full max-h-full object-contain"
         />
+      </div>
+    )}
+    {showVideo && location.content.imageUrl && location.content.videoUrl && (
+      <div 
+        className="fixed inset-0 z-[60] bg-black flex items-center justify-center p-4"
+        onClick={() => setShowVideo(false)}
+      >
+        <button
+          onClick={() => setShowVideo(false)}
+          className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors z-10"
+        >
+          <X className="w-6 h-6 text-white" />
+        </button>
+        <video 
+          src={flippedLearningVideo}
+          controls
+          autoPlay
+          className="max-w-full max-h-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          Your browser does not support the video tag.
+        </video>
       </div>
     )}
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/50 backdrop-blur-sm animate-fade-in">
@@ -90,7 +114,31 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({
         {/* Content */}
         <div className="p-6">
           {/* Media content */}
-          {location.content.videoUrl ? (
+          {location.content.imageUrl && location.content.videoUrl ? (
+            <div className="mb-4 relative group">
+              <img 
+                src={rebeccaTimetable}
+                alt={location.content.title}
+                className="w-full rounded-lg border border-border"
+              />
+              <div className="absolute inset-0 flex items-center justify-center gap-4">
+                <button
+                  onClick={() => setShowVideo(true)}
+                  className="p-6 bg-primary hover:bg-primary/90 rounded-full transition-all hover:scale-110 shadow-lg"
+                  title="Play Flipped Learning Video"
+                >
+                  <Play className="w-8 h-8 text-primary-foreground fill-current" />
+                </button>
+                <button
+                  onClick={() => setIsFullscreen(true)}
+                  className="p-4 bg-secondary hover:bg-secondary/90 rounded-full transition-all hover:scale-110 shadow-lg"
+                  title="View Fullscreen"
+                >
+                  <Maximize2 className="w-6 h-6 text-secondary-foreground" />
+                </button>
+              </div>
+            </div>
+          ) : location.content.videoUrl ? (
             <div className="mb-4 aspect-video bg-muted rounded-lg overflow-hidden border border-border">
               <video 
                 src={location.content.videoUrl}

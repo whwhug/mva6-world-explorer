@@ -29,7 +29,8 @@ const TOUR_CONTENT: Record<string, { description: string; videoUrl?: string; ima
   },
   'Rebecca Pinfield': {
     description: 'Flipped Learning: Four Pillars teaching approach',
-    imageUrl: '/src/assets/rebecca-timetable.avif'
+    imageUrl: '/src/assets/rebecca-timetable.avif',
+    videoUrl: '/src/assets/flipped-learning.mp4'
   },
   'Student TBC': {
     description: 'Matthew hosts Q&A with student'
