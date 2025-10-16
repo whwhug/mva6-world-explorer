@@ -17,17 +17,19 @@ interface LocationData {
     description: string;
     videoUrl?: string;
     logoUrl?: string;
+    imageUrl?: string;
   };
 }
 
 // Tour content mapping - in order of tour stops
-const TOUR_CONTENT: Record<string, { description: string; videoUrl?: string }> = {
+const TOUR_CONTENT: Record<string, { description: string; videoUrl?: string; imageUrl?: string }> = {
   'Ayoub': {
     description: 'Day in the Life video',
     videoUrl: 'https://dl.dropboxusercontent.com/scl/fi/75hg013ab1kpekz61p2e0/James-Story.mp4?rlkey=wc34m6o2mk0ojvkjbwro100rx&st=z7u44imv&raw=1'
   },
   'Rebecca Pinfield': {
-    description: 'Sample timetable ("Erin\'s timetable") + Flipped Learning video. Explains teaching approach: Four Pillars + Flipped Learning'
+    description: 'Flipped Learning: Four Pillars teaching approach',
+    imageUrl: '/src/assets/rebecca-timetable.avif'
   },
   'Student TBC': {
     description: 'Matthew hosts Q&A with student'
@@ -130,7 +132,8 @@ const Globe = () => {
             type: 'teacher',
             content: {
               title: `${university.name} - ${university.role}`,
-              description: contentInfo.description
+              description: contentInfo.description,
+              imageUrl: contentInfo.imageUrl
             }
           });
         }

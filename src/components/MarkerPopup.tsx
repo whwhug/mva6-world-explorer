@@ -1,5 +1,6 @@
-import React from 'react';
-import { X, MapPin, GraduationCap, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, MapPin, GraduationCap, Users, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import rebeccaTimetable from '@/assets/rebecca-timetable.avif';
 
 interface LocationData {
   id: string;
@@ -11,6 +12,7 @@ interface LocationData {
     description: string;
     videoUrl?: string;
     logoUrl?: string;
+    imageUrl?: string;
   };
 }
 
@@ -33,7 +35,28 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({
   totalCount, 
   isNavigating 
 }) => {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   return (
+    <>
+    {isFullscreen && (
+      <div 
+        className="fixed inset-0 z-[60] bg-black flex items-center justify-center p-4"
+        onClick={() => setIsFullscreen(false)}
+      >
+        <button
+          onClick={() => setIsFullscreen(false)}
+          className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+        >
+          <X className="w-6 h-6 text-white" />
+        </button>
+        <img 
+          src={rebeccaTimetable}
+          alt="Full screen view"
+          className="max-w-full max-h-full object-contain"
+        />
+      </div>
+    )}
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/50 backdrop-blur-sm animate-fade-in">
       <div className="relative w-full max-w-lg bg-card border border-border rounded-xl shadow-elegant animate-scale-in">
         {/* Header */}
@@ -83,6 +106,21 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({
                 Your browser does not support the video tag.
               </video>
             </div>
+          ) : location.content.imageUrl ? (
+            <div className="mb-4 relative group">
+              <img 
+                src={rebeccaTimetable}
+                alt={location.content.title}
+                className="w-full rounded-lg border border-border cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => setIsFullscreen(true)}
+              />
+              <button
+                onClick={() => setIsFullscreen(true)}
+                className="absolute top-2 right-2 p-2 bg-black/50 hover:bg-black/70 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+              >
+                <Maximize2 className="w-4 h-4 text-white" />
+              </button>
+            </div>
           ) : location.content.logoUrl ? (
             <div className="mb-4 flex justify-center">
               <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center border-2 border-border">
@@ -95,17 +133,6 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({
           <p className="text-sm text-muted-foreground leading-relaxed">
             {location.content.description}
           </p>
-
-          {/* Role badge */}
-          <div className="mt-4 flex justify-center">
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-              location.type === 'teacher'
-                ? 'bg-accent/20 text-accent border border-accent/30'
-                : 'bg-primary/20 text-primary border border-primary/30'
-            }`}>
-              {location.type === 'teacher' ? 'Faculty Member' : 'Student'}
-            </span>
-          </div>
         </div>
 
         {/* Footer */}
@@ -158,5 +185,6 @@ export const MarkerPopup: React.FC<MarkerPopupProps> = ({
         </div>
       </div>
     </div>
+    </>
   );
 };
