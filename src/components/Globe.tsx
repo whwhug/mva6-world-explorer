@@ -353,11 +353,15 @@ const Globe = () => {
   useEffect(() => {
     if (!mapContainer.current || tokenLoading || !token) return;
 
-    // Parse student and university data
-    const studentData = parseStudentData();
-    const universityData = parseUniversityData();
-    setStudents(studentData);
-    setUniversities(universityData);
+    // Parse student and university data asynchronously
+    const initializeData = async () => {
+      const studentData = await parseStudentData();
+      const universityData = parseUniversityData();
+      setStudents(studentData);
+      setUniversities(universityData);
+    };
+
+    initializeData();
 
     // Initialize map with API key from hook
     mapboxgl.accessToken = token;

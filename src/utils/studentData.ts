@@ -133,56 +133,87 @@ const locationCoordinates: Record<string, [number, number]> = {
   "Ajman, United Arab Emirates": [55.5136, 25.4052],
 };
 
-export function parseStudentData(): Student[] {
-  const csvText = `Year (NC),Name,Country Of Residence,Town
-12,Ayoub,Tunisia,Tunis
-13,Sophie,Taiwan,Taipei
-12,Student TBC,England,London`;
+export async function parseStudentData(): Promise<Student[]> {
+  try {
+    const response = await fetch('/src/data/students.csv');
+    const csvText = await response.text();
+    const lines = csvText.split('\n');
+    const students: Student[] = [];
 
-  const lines = csvText.split('\n');
-  const students: Student[] = [];
-
-  for (let i = 1; i < lines.length; i++) {
-    const parts = lines[i].split(',');
-    if (parts.length >= 4) {
-      const year = parts[0];
-      const name = parts[1];
-      const country = parts[2];
-      let town = parts[3];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
       
-      // Handle quoted towns
-      if (town.startsWith('"')) {
-        town = town.replace(/"/g, '');
+      const parts = line.split(',');
+      if (parts.length >= 4) {
+        const year = parts[0].trim();
+        const reason = parts[1].trim();
+        const country = parts[2].trim();
+        let town = parts[3].trim();
+        
+        // Handle quoted towns and clean up
+        if (town.startsWith('"')) {
+          town = town.replace(/"/g, '').trim();
+        }
+        
+        // Skip entries with no town
+        if (town === '' || town === ' ') continue;
+        
+        // Create location key for coordinates lookup
+        const locationKey = `${town}, ${country}`;
+        let coordinates: [number, number];
+        
+        // Try to find coordinates, fallback to approximate locations
+        if (locationCoordinates[locationKey]) {
+          coordinates = locationCoordinates[locationKey];
+        } else if (locationCoordinates[`${town}, England`] && country === 'England') {
+          coordinates = locationCoordinates[`${town}, England`];
+        } else {
+          // Default coordinates for unknown locations (center of UK)
+          coordinates = [-2.0, 54.0];
+        }
+        
+        students.push({
+          id: `student-${i}`,
+          name: `Student ${i}`, // Generic name since CSV doesn't have names
+          year,
+          country,
+          town,
+          coordinates
+        });
       }
-      
-      // Clean up town names
-      town = town.trim();
-      if (town === '') continue; // Skip entries with no town
-      
-      // Create location key for coordinates lookup
-      const locationKey = `${town}, ${country}`;
+    }
+
+    // Add special tour students who have specific names
+    const tourStudents = [
+      { name: 'Ayoub', year: '12', country: 'Tunisia', town: 'Tunis' },
+      { name: 'Sophie', year: '13', country: 'Taiwan', town: 'Taipei' },
+      { name: 'Student TBC', year: '12', country: 'England', town: 'London' }
+    ];
+
+    tourStudents.forEach((student, index) => {
+      const locationKey = `${student.town}, ${student.country}`;
       let coordinates: [number, number];
       
-      // Try to find coordinates, fallback to approximate locations
       if (locationCoordinates[locationKey]) {
         coordinates = locationCoordinates[locationKey];
-      } else if (locationCoordinates[`${town}, England`] && country === 'England') {
-        coordinates = locationCoordinates[`${town}, England`];
       } else {
-        // Default coordinates for unknown locations (center of UK)
         coordinates = [-2.0, 54.0];
       }
       
       students.push({
-        id: `student-${i}`,
-        name,
-        year,
-        country,
-        town,
+        id: `tour-student-${index}`,
+        name: student.name,
+        year: student.year,
+        country: student.country,
+        town: student.town,
         coordinates
       });
-    }
-  }
+    });
 
-  return students;
+    return students;
+  } catch (error) {
+    console.error('Error parsing student data:', error);
+    return [];
+  }
 }
