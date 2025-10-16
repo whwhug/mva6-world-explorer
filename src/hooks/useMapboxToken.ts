@@ -6,7 +6,7 @@ export const useMapboxToken = () => {
 
   useEffect(() => {
     // Hardcoded token for immediate access
-    setToken("pk.eyJ1IjoiaHVnb2RhIiwiYSI6ImNtNzhhOG9rZzFmNTUya3F5a296anJ6M2sifQ.qgYb-0FMOKHVGlDABeK7bA");
+    setToken("");
     setIsLoading(false);
   }, []);
 
