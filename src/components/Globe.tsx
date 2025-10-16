@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { MarkerPopup } from './MarkerPopup';
-import { useMapboxToken } from '../hooks/useMapboxToken';
+
 import { parseStudentData, Student } from '../utils/studentData';
 import { parseUniversityData, University } from '../utils/universityData';
 import { User, ToggleLeft, ToggleRight, GraduationCap } from 'lucide-react';
@@ -76,7 +76,6 @@ const Globe = () => {
   const [studentMarkers, setStudentMarkers] = useState<mapboxgl.Marker[]>([]);
   const [universityMarkers, setUniversityMarkers] = useState<mapboxgl.Marker[]>([]);
   const [tourLocations, setTourLocations] = useState<LocationData[]>([]);
-  const { token, isLoading: tokenLoading } = useMapboxToken();
 
   // Build tour locations from student and university data - IN ORDER
   useEffect(() => {
@@ -355,7 +354,7 @@ const Globe = () => {
   };
 
   useEffect(() => {
-    if (!mapContainer.current || tokenLoading || !token) return;
+    if (!mapContainer.current) return;
 
     // Parse student and university data asynchronously
     const initializeData = async () => {
@@ -367,8 +366,8 @@ const Globe = () => {
 
     initializeData();
 
-    // Initialize map with API key from hook
-    mapboxgl.accessToken = token;
+    // Initialize map - token can be added later
+    mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN_HERE';
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -482,7 +481,7 @@ const Globe = () => {
       });
       map.current?.remove();
     };
-  }, [token, tokenLoading]);
+  }, []);
 
   // Update student markers when students data changes
   useEffect(() => {
@@ -574,7 +573,7 @@ const Globe = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Loading overlay */}
-      {(isLoading || tokenLoading) && (
+      {isLoading && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/90 backdrop-blur-sm">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
